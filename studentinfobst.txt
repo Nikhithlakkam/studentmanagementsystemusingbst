@@ -1,0 +1,183 @@
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+struct node
+{
+int enroll, sem;//roll no,semester
+char nm[20], stream[10];//name,course
+struct node *left,*right;
+};
+
+struct node * insert_node(struct node *root,int enroll,char nm[], char strm[], int sem);//function to insert the student information
+struct node * FindMin(struct node *);
+void in_display(struct node *root);//function to display the students info in data base
+void search(struct node *root,int num);//searches and displays the students info
+struct node * delete_node(struct node *,int);//function to delete information from data base
+void main()
+{
+struct node *root=NULL;
+int roll,sm,ch,del_num,srch_num;
+char name[20], strm[10];
+do
+{
+printf("\n* * * * * * * * * * * * * * * * * * * * * * * *  *\n");
+printf("*  1.Insert a new information in the database    *\n");
+printf("*  2.Display all the information in the database *\n");
+printf("*  3.Delete an information from the database     *\n" );
+printf("*  4.Search an information in the database       *\n");
+printf("*  5.Exit                                        *\n");
+printf("*  Enter your choice                             *\n");
+printf("* * * * * * * * * * * * * * * * * * * * * * * *  *\n");
+scanf("%d",&ch);
+switch(ch)
+{
+case 1:printf("\nEnter the roll number of the student\t");
+scanf("%d",&roll);
+printf("\nEnter the name of the student\t");
+scanf("%s",&name);
+printf("\nEnter the course of the student\t");
+scanf("%s",&strm);
+printf("\nEnter the semester of the student\t");
+scanf("%d",&sm);
+root=insert_node(root,roll,name,strm,sm);
+break;
+case 2:
+in_display(root);
+break;
+case 3:
+printf("\nEnter the roll number of the student\t");
+scanf("%d",&del_num);
+root=delete_node(root,del_num);
+break;
+case 4:
+printf("\nEnter the roll number to be searched\t");
+scanf("%d",&srch_num);
+search(root,srch_num);
+break;
+case 5:
+exit(0);
+break;
+}
+}while(1);
+}
+struct node * insert_node(struct node *root,int enroll,char nm[], char stream[], int sem)
+{
+if(root==NULL)
+{
+struct node *temp=(struct node *)malloc(sizeof(struct node));
+strcpy(temp->nm,nm);
+strcpy(temp->stream,stream);
+temp->enroll=enroll;
+temp->sem=sem;
+temp->left=NULL;
+temp->right=NULL;
+return temp;
+}
+if(enroll<=root->enroll)
+{
+root->left=insert_node(root->left,enroll,nm,stream,sem);
+}
+else
+{
+root->right=insert_node(root->right,enroll,nm,stream,sem);
+}
+return root;
+}
+void in_display(struct node *root)
+{
+if(root==NULL)
+{
+return;
+}
+in_display(root->left);
+printf("* * * * * * * * * * * * * * *\n");
+printf("*   roll no %d              *\n",root->enroll);
+printf("*   name %s                 *\n",root->nm);
+printf("*   course %s               *\n",root->stream);
+printf("*   Semester %d             *\n",root->sem);
+printf("* * * * * * * * * * * * * * *\n");
+in_display(root->right);
+}
+struct node * delete_node(struct node *root,int num)
+{
+if(root == NULL)
+{
+return root;
+}
+else if(num < root->enroll)
+{
+root->left = delete_node(root->left , num);
+}
+else if(num > root->enroll)
+{
+root->right = delete_node(root->right , num);
+}
+else
+{
+if(root->left == NULL && root->right == NULL)
+{
+free(root);
+root = NULL;
+
+}
+else if(root->left == NULL)
+{
+struct node *temp = root;
+root = root->right;
+free(temp);
+temp = NULL;
+
+}
+else if(root->right == NULL)
+{
+struct node *temp = root;
+root = root->left;
+free(temp);
+temp = NULL;
+}
+else
+{
+struct node *temp = root;
+root->left = FindMin(root);
+root->left->right=root->right;
+root = root->left;
+temp->enroll = root->enroll;
+temp->sem = root->sem;
+strcpy(temp->nm,root->nm);
+strcpy(temp->stream,root->stream);
+free(temp);
+temp = NULL;
+}
+return root;
+}
+return root;
+}
+struct node * FindMin(struct node *root)
+{
+while(root->left != NULL)
+{
+root = root->left;
+}
+return root;
+}
+
+void search(struct node *root,int num)
+{
+if(root->enroll>num)
+{
+search(root->left,num);
+}
+else if(root->enroll<num)
+{
+search(root->right,num);
+}
+else
+{
+printf("* * * * * * * * * * * * * * *\n");
+printf("*   roll no %d              *\n",root->enroll);
+printf("*   name %s                 *\n",root->nm);
+printf("*   course %s               *\n",root->stream);
+printf("*   Semester %d             *\n",root->sem);
+printf("* * * * * * * * * * * * * * *\n");
+}
+}
